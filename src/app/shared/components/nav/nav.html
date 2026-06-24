@@ -1,0 +1,78 @@
+<nav class="sticky top-0 z-50 border-b border-slate-800 bg-slate-900/90 backdrop-blur-md">
+  <div class="mx-auto max-w-7xl px-4">
+    <div class="flex h-16 items-center justify-between gap-8">
+
+      <!-- Logo -->
+      <a href="/" class="flex shrink-0 items-center gap-3">
+        <div
+          class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 text-lg shadow-lg shadow-green-500/20"
+        >
+          ⚽
+        </div>
+
+        <span class="text-xl font-bold tracking-tight text-white">
+          FootballScout
+        </span>
+      </a>
+
+      <!-- Navigation -->
+      <ul class="hidden md:flex items-center gap-2">
+        <li>
+          <a
+            href="/players"
+            class="rounded-lg px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white"
+          >
+            Favoritos ❤️
+          </a>
+        </li>
+
+      </ul>
+
+      <!-- Search -->
+      <div class="hidden lg:block flex-1 max-w-md">
+        <div class="relative">
+
+          <svg
+            class="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z"
+            />
+          </svg>
+
+          <input
+            type="text"
+            placeholder="Buscar liga, equipo o jugador..."
+            class="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-10 pr-4 text-sm text-white transition outline-none placeholder:text-slate-500 focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+          />
+        </div>
+      </div>
+
+      <!-- Mobile -->
+      <button
+        class="md:hidden rounded-lg p-2 text-slate-400 transition hover:bg-slate-800 hover:text-white"
+      >
+        <svg
+          class="h-6 w-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
+
+    </div>
+  </div>
+</nav>

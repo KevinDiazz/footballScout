@@ -1,0 +1,53 @@
+<div class="my-5 mx-3 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+  @for (team of teams(); track team.idTeam) {
+
+    <div
+      class="group overflow-hidden rounded-2xl border border-slate-700 bg-slate-800 transition-all duration-300 hover:-translate-y-1 hover:border-green-500 hover:shadow-lg hover:shadow-green-500/10"
+    >
+
+      <!-- Colores -->
+      <div class="flex h-2">
+        @if (team.strColour1) {
+          <span
+            class="flex-1"
+            [style.background-color]="team.strColour1"
+          ></span>
+        }
+
+        @if (team.strColour2) {
+          <span
+            class="flex-1"
+            [style.background-color]="team.strColour2"
+          ></span>
+        }
+
+        @if (team.strColour3) {
+          <span
+            class="flex-1"
+            [style.background-color]="team.strColour3"
+          ></span>
+        }
+      </div>
+
+      <div class="flex flex-col items-center p-6">
+
+        <!-- Nombre -->
+        <h3
+          class="mb-5 text-center text-lg font-semibold text-white group-hover:text-green-400"
+        >
+          {{ team.strTeam }}
+        </h3>
+
+        <!-- Escudo -->
+        <img
+          [src]="team.strBadge"
+          [alt]="team.strTeam"
+          class="h-28 w-28 object-contain transition-transform duration-300 group-hover:scale-110"
+        />
+
+      </div>
+
+    </div>
+
+  }
+</div>
