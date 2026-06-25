@@ -15,6 +15,7 @@ export class LeagueService {
     '4332', // Serie A
     '4331', // Bundesliga
     '4334', // Ligue 1
+    '4346', //MLS
   ];
   constructor(private http: HttpClient) {}
   getLeagueById(id: string): Observable<LeaguesResponse> {

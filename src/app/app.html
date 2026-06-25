@@ -1,11 +1,11 @@
 <body class="min-h-screen flex flex-col">
+  <app-nav />
 
-  <app-nav/>
-
-  <main class="flex-1  bg-[url('/pexels-tomfisk-3441727.jpg')] bg-no-repeat bg-cover">
+  <main
+    class="flex-1 bg-[linear-gradient(rgba(15,23,42,.45),rgba(15,23,42,.85)),url('/pexels-tomfisk-3441727.jpg')] bg-no-repeat bg-cover bg-fixed"
+  >
     <router-outlet />
   </main>
-
+  <app-favorites></app-favorites>
   <app-footer />
-
 </body>

@@ -21,4 +21,7 @@ export class TeamService {
   getTeamByCountry(nameLeague: string): Observable<TeamResponse> {
     return this.http.get<TeamResponse>(`${this.API_URL}/search_all_teams.php?l=${nameLeague}`);
   }
+   getTeamByName(nameTeam: string): Observable<TeamResponse> {
+    return this.http.get<TeamResponse>(`${this.API_URL}/searchteams.php?t=${nameTeam}`);
+  }
 }
