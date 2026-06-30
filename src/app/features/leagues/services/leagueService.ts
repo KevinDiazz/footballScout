@@ -11,7 +11,7 @@ export class LeagueService {
   private readonly API_URL = 'https://www.thesportsdb.com/api/v1/json/123';
   private readonly TOP_LEAGUES_IDS = [
     '4335', // La Liga
-    '4328', // Premier League
+    '4328', // Premier Leag
     '4332', // Serie A
     '4331', // Bundesliga
     '4334', // Ligue 1
