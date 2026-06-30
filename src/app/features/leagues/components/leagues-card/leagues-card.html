@@ -1,6 +1,6 @@
 <div class="flex justify-center items-center min-h-[calc(100vh-64px-120px)] ">
 <div class="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 mt-3 mb-3 xl:w-5xl mx-2">
-  @for (league of leagues(); track league.idLeague) {
+  @for (league of leagueService.leagues(); track league.idLeague) {
     <a [routerLink]="['/teams',league.strLeague]">
     <div
       class="group cursor-pointer rounded-2xl flex justify-center border border-slate-700 bg-blue-800 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-green-500 hover:bg-slate-750 hover:shadow-lg hover:shadow-green-500/10 xl:h-100 h-60"
