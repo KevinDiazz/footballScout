@@ -45,11 +45,104 @@
             />
           </svg>
 
-          <input
+          <input [formControl]="buscador"
             type="text"
-            placeholder="Buscar liga, equipo o jugador..."
+            placeholder="Buscar liga o  equipo"
             class="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-10 pr-4 text-sm text-white transition outline-none placeholder:text-slate-500 focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
           />
+@if (searchService.results(); as results) {
+  @if (results.leagues.length || results.teams.length) {
+
+    <div
+      class="absolute left-0 right-0 top-full mt-2 max-h-[450px] overflow-y-auto rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl shadow-black/50"
+    >
+
+      <!-- Ligas -->
+      @if (results.leagues.length) {
+
+        <div class="border-b border-slate-800">
+
+          <div
+            class="sticky top-0 bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-slate-500"
+          >
+            Ligas
+          </div>
+
+          @for (league of results.leagues; track league.idLeague) {
+
+            <a
+              [routerLink]="['/teams', league.strLeague]"
+              class="flex items-center gap-3 px-4 py-3 transition hover:bg-slate-800"
+            >
+
+              <img
+                [src]="league.strBadge"
+                class="h-10 w-10 object-contain"
+              />
+
+              <div class="flex flex-col">
+
+                <span class="font-medium text-white">
+                  {{ league.strLeague }}
+                </span>
+
+                <span class="text-sm text-slate-400">
+                  {{ league.strCountry }}
+                </span>
+
+              </div>
+
+            </a>
+
+          }
+
+        </div>
+
+      }
+
+      <!-- Equipos -->
+      @if (results.teams.length) {
+
+        <div>
+
+          <div
+            class="sticky top-0 bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-slate-500"
+          >
+            Equipos
+          </div>
+
+          @for (team of results.teams; track team.idTeam) {
+
+            <a
+              [routerLink]="['/players', team.idTeam]"
+              class="flex items-center gap-3 px-4 py-3 transition hover:bg-slate-800"
+            >
+
+              <img
+                [src]="team.strBadge"
+                class="h-10 w-10 object-contain"
+              />
+
+              <div class="flex flex-col">
+
+                <span class="font-medium text-white">
+                  {{ team.strTeam }}
+                </span>
+
+              </div>
+
+            </a>
+
+          }
+
+        </div>
+
+      }
+
+    </div>
+
+  }
+}
         </div>
       </div>
 

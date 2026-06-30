@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { LeagueService } from '../../services/leagueService';
 import { League } from '../../../../models/league.model';
 import { RouterLink } from '@angular/router';
+import { TeamService } from '../../../teams/services/teamService';
 
 @Component({
   selector: 'app-leagues-card',
@@ -10,14 +11,19 @@ import { RouterLink } from '@angular/router';
   styleUrl: './leagues-card.css',
 })
 export class LeaguesCard {
-  constructor(private leagueService: LeagueService) {}
+  constructor(
+    public leagueService: LeagueService,
+    private teamServices: TeamService,
+  ) {}
 
-  leagues = signal<League[]>([]);
 
-  ngOnInit() {
-    this.leagueService.getTopLeagues().subscribe((data) => {
-     this.leagues.set(data)
-     console.log(data)
-    });
-  }
+ngOnInit() {
+
+  this.leagueService.loadLeagues().subscribe(() => {
+
+    this.teamServices.loadTeams().subscribe();
+
+  });
+
+}
 }
