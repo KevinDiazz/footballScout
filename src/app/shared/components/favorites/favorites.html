@@ -1,13 +1,30 @@
 @if (favoriteService.isOpen()) {
+  <!-- Overlay -->
   <div
-    class="fixed right-0 top-0 z-50 h-screen w-96 bg-slate-900 shadow-2xl border-l border-slate-700"
+    class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+    (click)="favoriteService.close()"
+  ></div>
+
+  <!-- Panel -->
+  <div
+    class="fixed right-0 top-0 z-50 h-screen w-full sm:w-96 border-l border-slate-700 bg-slate-900 shadow-2xl"
   >
     <!-- Header -->
-    <div class="flex items-center justify-between border-b border-slate-700 p-4">
-      <h2 class="text-xl font-bold text-white">⭐ Favoritos</h2>
+    <div class="flex items-center justify-between border-b border-slate-700 px-5 py-4">
+      <div>
+        <h2 class="text-xl font-bold text-white">⭐ Favoritos</h2>
+
+        <p class="text-sm text-slate-400">
+          {{
+            favoriteService.favorites().teams.length +
+              favoriteService.favorites().players.length
+          }}
+          elementos guardados
+        </p>
+      </div>
 
       <button
-        (click)="favoriteService.toggle()"
+        (click)="favoriteService.close()"
         class="rounded-lg p-2 text-slate-400 transition hover:bg-slate-800 hover:text-white"
       >
         ✕
@@ -15,70 +32,110 @@
     </div>
 
     <!-- Tabs -->
-    <div class="flex border-b border-slate-700 justify-evenly p-2">
+    <div class="m-4 flex rounded-xl bg-slate-800 p-1">
       <button
-        class="rounded-lg p-2 text-slate-400 transition bg-slate-700 hover:bg-slate-800 hover:text-yellow-400"
+        class="flex-1 rounded-lg py-2 text-sm font-medium transition"
         (click)="selectedTab.set('teams')"
-        [class.border-yellow-400]="selectedTab() === 'teams'"
-        [class.text-yellow-400]="selectedTab() === 'teams'"
+        [class.bg-yellow-400]="selectedTab() === 'teams'"
+        [class.text-slate-900]="selectedTab() === 'teams'"
+        [class.text-slate-300]="selectedTab() !== 'teams'"
       >
         Equipos
       </button>
 
       <button
-        class="rounded-lg p-2 text-slate-400 transition bg-slate-700 hover:bg-slate-800 hover:text-yellow-400"
+        class="flex-1 rounded-lg py-2 text-sm font-medium transition"
         (click)="selectedTab.set('players')"
-        [class.border-yellow-400]="selectedTab() === 'players'"
-        [class.text-yellow-400]="selectedTab() === 'players'"
+        [class.bg-yellow-400]="selectedTab() === 'players'"
+        [class.text-slate-900]="selectedTab() === 'players'"
+        [class.text-slate-300]="selectedTab() !== 'players'"
       >
         Jugadores
       </button>
     </div>
+
+    <!-- Teams -->
     @if (selectedTab() === 'teams') {
-      <!-- Lista -->
-      <div class="h-[calc(100vh-120px)] overflow-y-auto p-4">
-        @for (team of favoriteService.favorites().teams; track team.idTeam) {
-          <div
-            class="mb-3 flex items-center gap-3 rounded-xl bg-slate-800 p-3 transition hover:bg-slate-700"
-          >
-            <img
-              [src]="team.strBadge"
-              [alt]="team.strTeam"
-              class="h-12 w-12 rounded-lg bg-white object-contain p-1"
-            />
+      <div class="h-[calc(100vh-150px)] overflow-y-auto px-4 pb-6">
+        @if (favoriteService.favorites().teams.length === 0) {
+          <div class="flex h-full flex-col items-center justify-center text-slate-400">
+            <div class="text-6xl">⭐</div>
 
-            <div class="flex-1">
-              <h3 class="font-semibold text-white">
-                {{ team.strTeam }}
-              </h3>
-            </div>
-
-            <button
-              (click)="favoriteService.removeTeam(team.idTeam)"
-              class="text-red-400 transition hover:text-red-500"
-            >
-              ✕
-            </button>
+            <p class="mt-4 text-center">
+              No tienes equipos favoritos.
+            </p>
           </div>
+        } @else {
+          @for (team of favoriteService.favorites().teams; track team.idTeam) {
+            <div
+              class="mb-3 flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-800 p-3 transition hover:border-yellow-400 hover:bg-slate-700"
+            >
+              <img
+                [src]="team.strBadge"
+                [alt]="team.strTeam"
+                class="h-12 w-12 rounded-lg bg-white p-1 object-contain"
+              />
+
+              <div class="min-w-0 flex-1">
+                <h3 class="truncate font-semibold text-white">
+                  {{ team.strTeam }}
+                </h3>
+              </div>
+
+              <button
+                (click)="favoriteService.removeTeam(team.idTeam)"
+                class="rounded-lg p-2 text-red-400 transition hover:bg-red-500/10 hover:text-red-500"
+              >
+                ✕
+              </button>
+            </div>
+          }
         }
       </div>
-    } @else {
-      <div class="h-[calc(100vh-120px)] overflow-y-auto p-4">
-        @for (player of favoriteService.favorites().players; track player.idPlayer) {
-          <div class="mb-3 flex items-center gap-3 rounded-xl bg-slate-800 p-3">
-            <img [src]="player.strCutout" class="h-12 w-12 rounded-ñg object-cover" />
-            <div class="flex-1">
-              <span class="font-semibold text-white">
-                {{ player.strPlayer }}
-              </span>
-            </div>
-            <button
-              (click)="favoriteService.removePlayer(player.idPlayer)"
-              class="text-red-400 transition hover:text-red-500"
-            >
-              ✕
-            </button>
+    }
+
+    <!-- Players -->
+    @else {
+      <div class="h-[calc(100vh-150px)] overflow-y-auto px-4 pb-6">
+        @if (favoriteService.favorites().players.length === 0) {
+          <div class="flex h-full flex-col items-center justify-center text-slate-400">
+            <div class="text-6xl">👤</div>
+
+            <p class="mt-4 text-center">
+              No tienes jugadores favoritos.
+            </p>
           </div>
+        } @else {
+          @for (player of favoriteService.favorites().players; track player.idPlayer) {
+            <div
+              class="mb-3 flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-800 p-3 transition hover:border-yellow-400 hover:bg-slate-700"
+            >
+              <img
+                [src]="player.strCutout"
+                [alt]="player.strPlayer"
+                class="h-12 w-12 rounded-lg object-cover"
+              />
+
+              <div class="min-w-0 flex-1">
+                <h3 class="truncate font-semibold text-white">
+                  {{ player.strPlayer }}
+                </h3>
+
+                @if (player.strPosition) {
+                  <p class="text-sm text-slate-400">
+                    {{ player.strPosition }}
+                  </p>
+                }
+              </div>
+
+              <button
+                (click)="favoriteService.removePlayer(player.idPlayer)"
+                class="rounded-lg p-2 text-red-400 transition hover:bg-red-500/10 hover:text-red-500"
+              >
+                ✕
+              </button>
+            </div>
+          }
         }
       </div>
     }

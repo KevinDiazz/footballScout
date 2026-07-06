@@ -1,141 +1,168 @@
 <div class="mx-auto max-w-7xl p-4">
-  <div class="grid gap-6 lg:grid-cols-[380px_1fr]">
-    <!-- TEAM -->
-    <aside>
-      @for (team of team(); track team.idTeam) {
-        <div class="sticky top-20 overflow-hidden rounded-2xl border border-slate-700 bg-slate-800">
-          <!-- Banner -->
-          <div class="relative h-48">
-            <img [src]="team.strFanart4" class="h-full w-full object-cover" />
+  @if (loading()) {
+    <div class="flex min-h-[calc(100vh-64px-120px)] items-center justify-center">
+      <app-loader />
+    </div>
+  } @else if (error()) {
+    <div class="flex min-h-[calc(100vh-64px-120px)] items-center justify-center px-4">
+      <div
+        class="flex flex-col items-center gap-4 rounded-2xl border border-red-500/30 bg-slate-800/70 p-8 shadow-xl"
+      >
+        <app-error-animation></app-error-animation>
 
-            <div
-              class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"
-            ></div>
+        <h2 class="text-xl font-semibold text-white">Ha ocurrido un error</h2>
 
-            <!-- Escudo -->
-            <div
-              class="absolute bottom-4 left-1/2 -translate-x-1/2 container-foto p-2 rounded-full flex justify-center items-center bg-white shadow-xl"
-            >
-              <img
-                [src]="team.strBadge"
-                class="h-28 w-28 border-slate-800 bg-transparent p-2"
-              />
-            </div>
-          </div>
+        <p class="max-w-sm text-center text-slate-300">
+          No se pudo establecer la conexión con el servidor. Inténtalo de nuevo dentro de unos
+          segundos.
+        </p>
 
-          <!-- Info -->
-          <div class="mt-16 space-y-6 p-6">
-            <!-- Equipación -->
-            <div class="text-center">
-              <h3 class="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-400">
-                Equipación
-              </h3>
-
-              <img [src]="team.strEquipment" class="mx-auto h-44 object-contain" />
-            </div>
-
-            <!-- Stadium -->
-            <div class="rounded-xl bg-slate-900 p-4">
-              <div class="mb-3 text-center">
-                <p class="text-sm text-slate-400">Estadio</p>
-
-                <h4 class="font-semibold text-white">
-                  {{ team.strStadium }}
-                </h4>
-              </div>
-
-              <div class="flex justify-center gap-3 text-sm">
-                <span class="text-slate-400"> Capacidad </span>
-
-                <span class="font-semibold text-green-400">
-                  {{ team.intStadiumCapacity }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-    </aside>
-
-    <!-- PLAYERS -->
-    <section>
-      <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
-        @for (player of player(); track player.idPlayer) {
-          <article
-            class="overflow-hidden rounded-2xl border border-slate-700 bg-slate-800 transition hover:-translate-y-1 hover:border-green-500"
-          >
-              <div  (click)="addPlayer($event, player)" class="group relative inline-block w-full">
-          <button
-            class="flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200 hover:scale-110 m-1"
-            [class.bg-yellow-400]="isFavorite(player.idPlayer)"
-            [class.text-white]="isFavorite(player.idPlayer)"
-            [class.bg-slate-800]="!isFavorite(player.idPlayer)"
-            [class.text-slate-400]="!isFavorite(player.idPlayer)"
-          >
-            @if (isFavorite(player.idPlayer)) {
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                class="h-6 w-6"
-              >
-                <path
-                  d="M11.48 3.499a.563.563 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321 1.01l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.386a.562.562 0 01-.84.61L12 17.77l-4.735 2.792a.562.562 0 01-.84-.61l1.285-5.386a.563.563 0 00-.182-.557L3.324 10.407a.563.563 0 01.321-1.01l5.518-.442a.563.563 0 00.475-.345l2.125-5.111z"
-                />
-              </svg>
-            } @else {
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                class="h-6 w-6 transition"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M11.48 3.499a.563.563 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321 1.01l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.386a.562.562 0 01-.84.61L12 17.77l-4.735 2.792a.562.562 0 01-.84-.61l1.285-5.386a.563.563 0 00-.182-.557L3.324 10.407a.563.563 0 01.321-1.01l5.518-.442a.563.563 0 00.475-.345l2.125-5.111z"
-                />
-              </svg>
-            }
-          </button>
-
-          <div
-            class="pointer-events-none absolute left-28 bottom-0.5 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-slate-900 px-2 py-1 text-xs text-white shadow-lg opacity-0 transition-all duration-200 group-hover:opacity-100"
-          >
-            {{ isFavorite(player.idPlayer) ? 'Quitar de favoritos' : 'Añadir a favoritos' }}
-          </div>
-        </div>
-            <div class="relative h-64 bg-slate-900">
-              <img
-                [src]="player.strCutout"
-                class="h-full w-full object-contain transition duration-300 group-hover:scale-105"
-              />
-
-              <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-900"></div>
-            </div>
-
-            <div class="space-y-2 p-4">
-              <h3 class="truncate text-center font-semibold text-white">
-                {{ player.strPlayer }}
-              </h3>
-
-              <div class="flex justify-center">
-                <span
-                  class="rounded-full bg-green-600/20 px-3 py-1 text-xs font-medium text-green-400"
-                >
-                  {{ player.strPosition }}
-                </span>
-              </div>
-
-              <p class="text-center text-sm text-slate-400">
-                {{ player.strNationality }}
-              </p>
-            </div>
-          </article>
-        }
+        <button
+          class="rounded-lg bg-red-600 px-5 py-2 font-medium text-white transition hover:bg-red-700"
+          (click)="retry()"
+        >
+          Reintentar
+        </button>
       </div>
-    </section>
-  </div>
+    </div>
+  } @else {
+    <div class="grid gap-6 lg:grid-cols-[380px_1fr]">
+      <!-- TEAM -->
+      <aside>
+        @for (team of team(); track team.idTeam) {
+          <div
+            class="sticky top-20 overflow-hidden rounded-2xl border border-slate-700 bg-slate-800"
+          >
+            <!-- Banner -->
+            <div class="relative h-48">
+              <img [src]="team.strFanart4" class="h-full w-full object-cover" />
+
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"
+              ></div>
+
+              <!-- Escudo -->
+              <div
+                class="absolute bottom-4 left-1/2 -translate-x-1/2 container-foto p-2 rounded-full flex justify-center items-center bg-white shadow-xl"
+              >
+                <img [src]="team.strBadge" class="h-28 w-28 border-slate-800 bg-transparent p-2" />
+              </div>
+            </div>
+
+            <!-- Info -->
+            <div class="mt-16 space-y-6 p-6">
+              <!-- Equipación -->
+              <div class="text-center">
+                <h3 class="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-400">
+                  Equipación
+                </h3>
+
+                <img [src]="team.strEquipment" class="mx-auto h-44 object-contain" />
+              </div>
+
+              <!-- Stadium -->
+              <div class="rounded-xl bg-slate-900 p-4">
+                <div class="mb-3 text-center">
+                  <p class="text-sm text-slate-400">Estadio</p>
+
+                  <h4 class="font-semibold text-white">
+                    {{ team.strStadium }}
+                  </h4>
+                </div>
+
+                <div class="flex justify-center gap-3 text-sm">
+                  <span class="text-slate-400"> Capacidad </span>
+
+                  <span class="font-semibold text-green-400">
+                    {{ team.intStadiumCapacity }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </aside>
+
+      <!-- PLAYERS -->
+      <section>
+        <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
+          @for (player of player(); track player.idPlayer) {
+            <article
+              class="overflow-hidden rounded-2xl border border-slate-700 bg-slate-800 transition hover:-translate-y-1 hover:border-green-500"
+            >
+              <div (click)="addPlayer($event, player)" class="group relative inline-block w-full">
+                <button
+                  class="flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200 hover:scale-110 m-1"
+                  [class.bg-yellow-400]="isFavorite(player.idPlayer)"
+                  [class.text-white]="isFavorite(player.idPlayer)"
+                  [class.bg-slate-800]="!isFavorite(player.idPlayer)"
+                  [class.text-slate-400]="!isFavorite(player.idPlayer)"
+                >
+                  @if (isFavorite(player.idPlayer)) {
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      class="h-6 w-6"
+                    >
+                      <path
+                        d="M11.48 3.499a.563.563 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321 1.01l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.386a.562.562 0 01-.84.61L12 17.77l-4.735 2.792a.562.562 0 01-.84-.61l1.285-5.386a.563.563 0 00-.182-.557L3.324 10.407a.563.563 0 01.321-1.01l5.518-.442a.563.563 0 00.475-.345l2.125-5.111z"
+                      />
+                    </svg>
+                  } @else {
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      class="h-6 w-6 transition"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M11.48 3.499a.563.563 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321 1.01l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.386a.562.562 0 01-.84.61L12 17.77l-4.735 2.792a.562.562 0 01-.84-.61l1.285-5.386a.563.563 0 00-.182-.557L3.324 10.407a.563.563 0 01.321-1.01l5.518-.442a.563.563 0 00.475-.345l2.125-5.111z"
+                      />
+                    </svg>
+                  }
+                </button>
+
+                <div
+                  class="pointer-events-none absolute left-28 bottom-0.5 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-slate-900 px-2 py-1 text-xs text-white shadow-lg opacity-0 transition-all duration-200 group-hover:opacity-100"
+                >
+                  {{ isFavorite(player.idPlayer) ? 'Quitar de favoritos' : 'Añadir a favoritos' }}
+                </div>
+              </div>
+              <div class="relative h-64 bg-slate-900">
+                <img
+                  [src]="player.strCutout"
+                  class="h-full w-full object-contain transition duration-300 group-hover:scale-105"
+                />
+
+                <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-900"></div>
+              </div>
+
+              <div class="space-y-2 p-4">
+                <h3 class="truncate text-center font-semibold text-white">
+                  {{ player.strPlayer }}
+                </h3>
+
+                <div class="flex justify-center">
+                  <span
+                    class="rounded-full bg-green-600/20 px-3 py-1 text-xs font-medium text-green-400"
+                  >
+                    {{ player.strPosition }}
+                  </span>
+                </div>
+
+                <p class="text-center text-sm text-slate-400">
+                  {{ player.strNationality }}
+                </p>
+              </div>
+            </article>
+          }
+        </div>
+      </section>
+    </div>
+  }
 </div>

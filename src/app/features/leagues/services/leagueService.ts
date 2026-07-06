@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { LeaguesResponse } from '../../../models/responses/leaguesResponse';
-import { catchError, forkJoin, map, Observable, of, tap } from 'rxjs';
+import { catchError, delay, finalize, forkJoin, map, Observable, of, tap } from 'rxjs';
 import { League } from '../../../models/league.model';
 
 @Injectable({
@@ -18,6 +18,8 @@ export class LeagueService {
     '4346', //MLS
   ];
   leagues = signal<League[]>([]);
+  loading = signal(false);
+  error = signal(false);
   constructor(private http: HttpClient) {}
   getLeagueById(id: string): Observable<LeaguesResponse> {
     return this.http.get<LeaguesResponse>(`${this.API_URL}/lookupleague.php?id=${id}`);
@@ -25,15 +27,32 @@ export class LeagueService {
   getTopLeagues(): Observable<League[]> {
     return forkJoin(
       this.TOP_LEAGUES_IDS.map((id) =>
-        this.getLeagueById(id).pipe(catchError(() => of({ leagues: [] }))),
+        this.getLeagueById(id).pipe(
+          catchError((err) => {
+            this.error.set(true);
+            return of({ leagues: [] });
+          }),
+        ),
       ),
     ).pipe(map((responses) => responses.map((response) => response.leagues[0]).filter(Boolean)));
   }
 
   loadLeagues(): Observable<League[]> {
+    this.loading.set(true);
+    this.error.set(false);
     if (this.leagues().length > 0) {
+      this.loading.set(false);
       return of(this.leagues());
     }
-    return this.getTopLeagues().pipe(tap((leagues:League[]) => this.leagues.set(leagues)));
+    return this.getTopLeagues().pipe(
+      delay(2000),
+      tap((leagues: League[]) => this.leagues.set(leagues)),
+      catchError((err) => {
+        this.error.set(true);
+
+        return of([]);
+      }),
+      finalize(() => this.loading.set(false)),
+    );
   }
 }
