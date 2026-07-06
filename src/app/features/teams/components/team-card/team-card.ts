@@ -3,19 +3,45 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TeamService } from '../../services/teamService';
 import { Team } from '../../../../models/team.model';
 import { FavoritesService } from '../../../../core/services/favoritesService';
+import { Loader } from '../../../../shared/components/loader/loader';
+import { ErrorAnimation } from '../../../../shared/components/error-animation/error-animation';
+import { catchError, delay, finalize, of } from 'rxjs';
 
 @Component({
   selector: 'app-team-card',
-  imports: [RouterLink],
+  imports: [RouterLink, Loader, ErrorAnimation],
   templateUrl: './team-card.html',
   styleUrl: './team-card.css',
 })
 export class TeamCard {
   constructor(
     private route: ActivatedRoute,
-    private teamService: TeamService,
+    public teamService: TeamService,
     private favoriteService: FavoritesService,
   ) {}
+  leagueName: string = '';
+  teams = signal<Team[]>([]);
+  retry() {
+    this.leagueName = decodeURIComponent(this.route.snapshot.paramMap.get('name') ?? '').replace(
+      /\s+/g,
+      '_',
+    );
+    this.teamService.error.set(false);
+    this.teamService.loading.set(true);
+    this.teamService
+      .getTeamByCountry(this.leagueName)
+      .pipe(
+        delay(2000),
+        catchError(() => {
+          this.teamService.error.set(true);
+          return of({ teams: [] });
+        }),
+        finalize(() => this.teamService.loading.set(false)),
+      )
+      .subscribe((data) => {
+        this.teams.set(data.teams);
+      });
+  }
 
   addTeam(event: MouseEvent, team: Team) {
     event.preventDefault();
@@ -31,16 +57,25 @@ export class TeamCard {
     return this.favoriteService.hasTeam(idteam);
   }
 
-  leagueName: string = '';
-  teams = signal<Team[]>([]);
   ngOnInit() {
     this.leagueName = decodeURIComponent(this.route.snapshot.paramMap.get('name') ?? '').replace(
       /\s+/g,
       '_',
     );
-    this.teamService.getTeamByCountry(this.leagueName).subscribe((data) => {
-      this.teams.set(data.teams);
-      console.log(data.teams);
-    });
+    this.teamService.error.set(false);
+    this.teamService.loading.set(true);
+    this.teamService
+      .getTeamByCountry(this.leagueName)
+      .pipe(
+        delay(2000),
+        catchError(() => {
+          this.teamService.error.set(true);
+          return of({ teams: [] });
+        }),
+        finalize(() => this.teamService.loading.set(false)),
+      )
+      .subscribe((data) => {
+        this.teams.set(data.teams);
+      });
   }
 }

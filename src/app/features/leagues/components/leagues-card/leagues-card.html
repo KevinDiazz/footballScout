@@ -1,26 +1,59 @@
-<div class="flex justify-center items-center min-h-[calc(100vh-64px-120px)] ">
-<div class="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 mt-3 mb-3 xl:w-5xl mx-2">
-  @for (league of leagueService.leagues(); track league.idLeague) {
-    <a [routerLink]="['/teams',league.strLeague]">
-    <div
-      class="group cursor-pointer rounded-2xl flex justify-center border border-slate-700 bg-blue-800 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-green-500 hover:bg-slate-750 hover:shadow-lg hover:shadow-green-500/10 xl:h-100 h-60"
-    >
-      <div class="flex flex-col items-center justify-center gap-4">
-        <div class="flex h-24 w-24 rounded-full bg-slate-50 p-5 group-hover:border-4 group-hover:border-green-500">
-          <img
-            class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
-            [src]="league.strBadge"
-            [alt]="league.strLeague"
-          />
-        </div>
+<div class="flex justify-center items-center min-h-[calc(100vh-64px-120px)]">
+  @if (leagueService.loading()) {
+    <div class="flex min-h-[calc(10vh-64px-120px)] items-center justify-center">
+      <app-loader />
+    </div>
+  } @else if (leagueService.error()) {
+    <div class="flex min-h-[calc(100vh-64px-120px)] items-center justify-center px-4">
+      <div
+        class="flex flex-col items-center gap-4 rounded-2xl border border-red-500/30 bg-slate-800/70 p-8 shadow-xl"
+      >
+        <app-error-animation></app-error-animation>
 
-        <h3
-          class="text-center text-lg font-semibold text-white transition-colors group-hover:text-green-400"
+        <h2 class="text-xl font-semibold text-white">Ha ocurrido un error</h2>
+
+        <p class="max-w-sm text-center text-slate-300">
+          No se pudo establecer la conexión con el servidor. Inténtalo de nuevo dentro de unos
+          segundos.
+        </p>
+
+        <button
+          class="rounded-lg bg-red-600 px-5 py-2 font-medium text-white transition hover:bg-red-700"
+          (click)="retry()"
         >
-          {{ league.strLeague }}
-        </h3>
+          Reintentar
+        </button>
       </div>
-    </div></a>
+    </div>
+  } @else {
+    <div
+      class="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 mt-3 mb-3 xl:w-5xl mx-2"
+    >
+      @for (league of leagueService.leagues(); track league.idLeague) {
+        <a [routerLink]="['/teams', league.strLeague]">
+          <div
+            class="group cursor-pointer rounded-2xl flex justify-center border border-slate-700 bg-blue-800 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-green-500 hover:bg-slate-750 hover:shadow-lg hover:shadow-green-500/10 xl:h-100 h-60"
+          >
+            <div class="flex flex-col items-center justify-center gap-4">
+              <div
+                class="flex h-24 w-24 rounded-full bg-slate-50 p-5 group-hover:border-4 group-hover:border-green-500"
+              >
+                <img
+                  class="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
+                  [src]="league.strBadge"
+                  [alt]="league.strLeague"
+                />
+              </div>
+
+              <h3
+                class="text-center text-lg font-semibold text-white transition-colors group-hover:text-green-400"
+              >
+                {{ league.strLeague }}
+              </h3>
+            </div>
+          </div></a
+        >
+      }
+    </div>
   }
-</div>
 </div>

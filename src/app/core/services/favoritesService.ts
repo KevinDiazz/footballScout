@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { effect, Injectable, signal } from '@angular/core';
 import { Team } from '../../models/team.model';
 import { Favorites } from '../../models/favorites';
 import { Player } from '../../models/player.model';
@@ -7,7 +7,14 @@ import { Player } from '../../models/player.model';
   providedIn: 'root',
 })
 export class FavoritesService {
-  favorites = signal<Favorites>({ players: [], teams: [] });
+  constructor() {
+    effect(() => {
+      localStorage.setItem('favorites', JSON.stringify(this.favorites()));
+    });
+  }
+  favorites = signal<Favorites>(
+    JSON.parse(localStorage.getItem('favorites') ?? '{ "players": [], "teams": [] }'),
+  );
   isOpen = signal(false);
 
   toggle() {
@@ -26,7 +33,6 @@ export class FavoritesService {
       ...favorites,
       teams: [...favorites.teams, team],
     }));
-    console.log(this.favorites());
   }
 
   addPlayer(player: Player) {
@@ -34,7 +40,6 @@ export class FavoritesService {
       ...favorites,
       players: [...favorites.players, player],
     }));
-    console.log(this.favorites);
   }
 
   removeTeam(id: string) {
@@ -56,7 +61,6 @@ export class FavoritesService {
   }
 
   hasPlayer(idPlayer: string): boolean {
-    console.log(idPlayer)
     return this.favorites().players.some((player) => player.idPlayer === idPlayer);
   }
 }

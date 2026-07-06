@@ -6,9 +6,12 @@ import { Player } from '../../../../models/player.model';
 import { TeamService } from '../../../teams/services/teamService';
 import { Team } from '../../../../models/team.model';
 import { FavoritesService } from '../../../../core/services/favoritesService';
+import { catchError, delay, finalize, of } from 'rxjs';
+import { Loader } from '../../../../shared/components/loader/loader';
+import { ErrorAnimation } from '../../../../shared/components/error-animation/error-animation';
 @Component({
   selector: 'app-player-card',
-  imports: [],
+  imports: [Loader, ErrorAnimation],
   templateUrl: './player-card.html',
   styleUrl: './player-card.css',
 })
@@ -17,13 +20,14 @@ export class PlayerCard {
     private route: ActivatedRoute,
     private playerService: PlayerService,
     private teamService: TeamService,
-    private favoriteService:FavoritesService
+    private favoriteService: FavoritesService,
   ) {}
   teamName: string | null = null;
   teamId: string | null = null;
   player = signal<Player[]>([]);
   team = signal<Team[]>([]);
-
+  loading = signal(false);
+  error = signal(false);
   addTeam(event: MouseEvent, team: Team) {
     event.preventDefault();
     event.stopPropagation();
@@ -48,21 +52,65 @@ export class PlayerCard {
     return this.favoriteService.hasPlayer(idPlayer);
   }
 
-  ngOnInit() {
-    this.teamId = this.route.snapshot.paramMap.get('idTeam');
-    if (this.teamId) {
-      this.playerService.getPlayersByIdTeam(this.teamId).subscribe((data) => {
-        this.player.set(data.player);
-        console.log(data);
+  retry() {
+    this.route.paramMap.subscribe((params) => {
+      const teamId = params.get('idTeam');
+      const teamName = params.get('teamName');
+
+      if (!teamId || !teamName) return;
+
+      this.teamId = teamId;
+      this.teamName = decodeURIComponent(teamName).replace(/\s+/g, '_');
+      this.error.set(false);
+      this.loading.set(true);
+      this.playerService
+        .getPlayersByIdTeam(teamId)
+        .pipe(
+          delay(2000),
+          catchError(() => {
+            this.error.set(true);
+            return of({ player: [] });
+          }),
+          finalize(() => this.loading.set(false)),
+        )
+        .subscribe((data) => {
+          this.player.set(data.player);
+        });
+
+      this.teamService.getTeamByName(this.teamName).subscribe((data) => {
+        this.team.set(data.teams);
       });
-    }
-    this.teamName = decodeURIComponent(this.route.snapshot.paramMap.get('teamName') ?? '').replace(
-      /\s+/g,
-      '_',
-    );
-    this.teamService.getTeamByName(this.teamName).subscribe((data) => {
-      this.team.set(data.teams);
-      console.log(data);
+    });
+  }
+
+  ngOnInit() {
+    this.route.paramMap.subscribe((params) => {
+      const teamId = params.get('idTeam');
+      const teamName = params.get('teamName');
+
+      if (!teamId || !teamName) return;
+
+      this.teamId = teamId;
+      this.teamName = decodeURIComponent(teamName).replace(/\s+/g, '_');
+      this.error.set(false);
+      this.loading.set(true);
+      this.playerService
+        .getPlayersByIdTeam(teamId)
+        .pipe(
+          delay(2000),
+          catchError(() => {
+            this.error.set(true);
+            return of({ player: [] });
+          }),
+          finalize(() => this.loading.set(false)),
+        )
+        .subscribe((data) => {
+          this.player.set(data.player);
+        });
+
+      this.teamService.getTeamByName(this.teamName).subscribe((data) => {
+        this.team.set(data.teams);
+      });
     });
   }
 }
